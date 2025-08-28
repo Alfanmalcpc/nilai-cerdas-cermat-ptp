@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Cerdas Cermat penerimaan tamu pengak</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('cerdas cermat.png') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    h1 {
+      margin: 20px;
+      font-size: 2rem;
+      text-shadow: 2px 2px 5px black;
+    }
+    .controls {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 6px 12px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 15px;
+      width: 80%;
+      max-width: 900px;
+    }
+    .box {
+      background: rgba(0,0,0,0.6);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .number {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="timer">01:00</h1>
+  <div class="controls">
+    <button id="startBtn">Mulai</button>
+    <button id="stopBtn">Stop</button>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <!-- Audio alarm -->
+  <audio id="alarmSound">
+    <source src="" type="audio/ogg">
+    Browser kamu tidak mendukung suara alarm.
+  </audio>
+
+  <script>
+    let time = 60;
+    let interval;
+    const timer = document.getElementById("timer");
+    const grid = document.getElementById("grid");
+    const alarm = document.getElementById("alarmSound");
+
+    const labels = ["X-1","X-2","X-3","X-4","X-5","X-6","X-7","X-8","X-9"];
+
+    // buat 9 kotak
+    labels.forEach((label, i) => {
+      const box = document.createElement("div");
+      box.className = "box";
+
+      const title = document.createElement("div");
+      title.textContent = "Kelas " + label;
+
+      const number = document.createElement("div");
+      number.className = "number";
+      number.textContent = "0";
+
+      const plusBtn = document.createElement("button");
+      plusBtn.textContent = "+25";
+
+      const minusBtn = document.createElement("button");
+      minusBtn.textContent = "-25";
+
+      let value = 0;
+
+      plusBtn.addEventListener("click", () => {
+        value += 25;
+        number.textContent = value;
+      });
+
+      minusBtn.addEventListener("click", () => {
+        value -= 25;
+        number.textContent = value;
+      });
+
+      box.appendChild(title);
+      box.appendChild(number);
+      box.appendChild(plusBtn);
+      box.appendChild(minusBtn);
+      grid.appendChild(box);
+    });
+
+    // tombol mulai
+    document.getElementById("startBtn").addEventListener("click", () => {
+      clearInterval(interval);
+      time = 60;
+      timer.textContent = "01:00";
+
+      interval = setInterval(() => {
+        time--;
+        let m = String(Math.floor(time / 60)).padStart(2, "0");
+        let s = String(time % 60).padStart(2, "0");
+        timer.textContent = `${m}:${s}`;
+        if (time <= 0) {
+          clearInterval(interval);
+          timer.textContent = "Waktu Habis!";
+          alarm.play(); // bunyikan alarm
+        }
+      }, 1000);
+    });
+
+    // tombol stop
+    document.getElementById("stopBtn").addEventListener("click", () => {
+      clearInterval(interval);
+      alarm.pause();
+      alarm.currentTime = 0;
+    });
+  </script>
+</body>
+</html>
